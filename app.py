@@ -28,5 +28,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    return ''
+    session['login'] = False
+    return redirect(url_for('login'))
 
