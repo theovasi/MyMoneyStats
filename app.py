@@ -16,7 +16,7 @@ def login():
         if request.form['passwd'] == app.config['PASSWD']:
             session['login'] = True
             
-            if request.form['remember']:
+            if request.form.get('remember', False):
                 session.permanent = True
             
             return redirect(url_for('index'))
