@@ -3,3 +3,4 @@ __pycache__/
 .env
 /gulp/node_modules
 /static/dist/*n
+settings.cfg
