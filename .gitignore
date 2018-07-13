@@ -4,3 +4,5 @@ __pycache__/
 /gulp/node_modules
 /static/dist/*n
 settings.cfg
+/data/
+/db/
