@@ -2,7 +2,7 @@
 __pycache__/
 .env
 /gulp/node_modules
-/static/dist/*n
+/static/dist/*
 settings.cfg
 /data/
 /db/
