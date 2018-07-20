@@ -2,5 +2,30 @@
 
 {% block content %}
 
+<form method="post" action="/create/entry">
+	<label for="amount">Amount</label>
+	<input id="amount" name="amount" type="number" placeholder="Amount" step="0.01" required>
+	<label for="desc">Description</label>
+	<input id="desc" name="desc" type="text" placeholder="Description (optional)">
+	<label for="date">Date</label>
+	<input id="date" name="date" type="date" placeholder="Date" required>
+	<button type="submit">Create</button>
+</form>
+
+<table>
+    <tr>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Desc</th>
+    </tr>    
+    {% for entry in acc_entries %}
+        <tr>
+            <td>{{ entry[1] }}</td>
+            <td>{{ entry[2] }}</td>
+            <td>{{ entry[3] }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
 
 {% endblock %}
