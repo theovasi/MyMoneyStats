@@ -67,18 +67,23 @@ def logout():
 
 @app.route('/create/entry', methods=['POST'])
 def create_entry():
+    crdate = int(datetime.today().timestamp())
     amount = request.form['amount']
     desc = request.form['desc']
     date = int(datetime.strptime(request.form['date'], '%Y-%m-%d').timestamp())
 
     cur = get_db().cursor()
 
-    print(cur.execute('select * from accounting_entry').fetchall())
+    query = 'INSERT INTO accounting_entry (crdate, amount, date,  desc) VALUES (?, ?, ?, ?)'
 
-    query = 'INSERT INTO accounting_entry (amount, date,  desc) VALUES (?, ?, ?)'
+    cur.execute(query, (crdate, amount, date, desc))
+    
+    entry_uid = get_rows('SELECT last_insert_rowid()')[0][0]
 
-    cur.execute(query, (amount, date, desc))
-
+    for tag_uid in [int(uid) for uid in request.form.getlist('tag')]:
+        query = 'INSERT INTO tag_mm (uid_local, uid_foreign) VALUES (?,?)'
+        cur.execute(query, (tag_uid, entry_uid))
+        
     get_db().commit()
 
     return redirect(url_for('index'))
@@ -86,14 +91,14 @@ def create_entry():
 
 @app.route('/create/tag', methods=['POST'])
 def create_tag():
-	tag = request.form['tag']
-	
-	cur = get_db().cursor()
-	
-	query = 'INSERT INTO tag (value) VALUES (?)'
-	cur.execute(query, (tag,))
-	
-	get_db().commit()
-	
-	return redirect(url_for('index'))
+    tag = request.form['tag']
+    
+    cur = get_db().cursor()
+    
+    query = 'INSERT INTO tag (value) VALUES (?)'
+    cur.execute(query, (tag,))
+    
+    get_db().commit()
+    
+    return redirect(url_for('index'))
 

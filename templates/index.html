@@ -9,6 +9,14 @@
 	<input id="desc" name="desc" type="text" placeholder="Description (optional)">
 	<label for="date">Date</label>
 	<input id="date" name="date" type="date" placeholder="Date" required>
+    <div>
+        {%  for tag in tags %}
+            <label>
+                {{ tag[1] }}
+                <input name="tag" type="checkbox" value="{{ tag[0] }}">
+            </label>
+        {% endfor %}
+    </div>
 	<button type="submit">Create</button>
 </form>
 
@@ -20,9 +28,9 @@
     </tr>    
     {% for entry in acc_entries %}
         <tr>
-            <td>{{ entry[1] }}</td>
             <td>{{ entry[2] }}</td>
             <td>{{ entry[3] }}</td>
+            <td>{{ entry[4] }}</td>
         </tr>
     {% endfor %}
 </table>

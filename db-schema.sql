@@ -1,5 +1,6 @@
 CREATE TABLE accounting_entry (
     uid INTEGER PRIMARY KEY,
+    crdate INTEGER NOT NULL,
     amount REAL NOT NULL,
     date INTEGER NOT NULL,
     desc TEXT,
