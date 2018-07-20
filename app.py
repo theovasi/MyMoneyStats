@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+from collections import namedtuple
 
 from flask import Flask, render_template, session, redirect, request, url_for, g
 app = Flask(__name__)
@@ -7,6 +8,8 @@ app.config.from_envvar('APP_SETTINGS')
 
 DATABASE = './data/mms.sqlite'
 
+AccountingEntry = namedtuple('AccountingEntry', 'uid, crdate, amount, date, desc, tags')
+Tag = namedtuple('Tag', 'uid, value')
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -37,8 +40,24 @@ def index():
     if not session.get('login', False):
         return redirect(url_for('login'))
 
-    acc_entries = get_rows('SELECT * FROM accounting_entry WHERE NOT DELETED LIMIT 10')
-    tags = get_rows('SELECT * FROM tag WHERE NOT DELETED')
+    query = '''SELECT uid, crdate, amount, date, desc 
+             FROM accounting_entry WHERE NOT DELETED LIMIT 10
+            '''
+
+    acc_entries = []
+
+    for row in get_rows(query):
+        query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm 
+                   ON tag.uid=tag_mm.uid_local 
+                   AND tag_mm.uid_foreign=(?)'''
+        entry_tags = get_rows(query, (row[0],))
+        
+        entry_tags = [Tag._make(tag) for tag in entry_tags]
+        
+        acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
+
+    tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
+    tags = [Tag._make(tag) for tag in tags]
 
     return render_template('index.html', acc_entries=acc_entries, tags=tags)
 
