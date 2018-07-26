@@ -1,15 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<form method="post">
-  <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-  <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" name=passwd id="inputPassword" placeholder="Password" required>
-  <div>
-    <label>
-      <input type="checkbox" value="true" name="remember"> Remember me
-    </label>
-  </div>
-  <button type="submit">Sign in</button>
-</form>
+<div class="login-form-wrapper">
+    <h1 class="center-text">Muh Money Stats</h1>
+    <div class="login-form">
+        <form method="post">
+          <h2 class="center-text">Sign in</h2>
+          <input type="password" name=passwd id="inputPassword" placeholder="Password" required>
+          <div>
+            <label>
+              <input type="checkbox" value="true" name="remember"> Remember me
+            </label>
+          </div>
+          <button type="submit">Sign in</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

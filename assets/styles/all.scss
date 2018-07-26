@@ -24,3 +24,22 @@
     }
 }
 
+.login-form-wrapper {
+    padding-top: 25vh;
+}
+
+.login-form {
+    margin: 0 auto 0 auto;
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10%;
+    
+    button, #inputPassword {
+        width: 100%;
+    }
+}
+
+.center-text {
+    text-align: center;
+}
