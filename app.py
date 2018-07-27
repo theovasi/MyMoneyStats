@@ -40,26 +40,7 @@ def index():
     if not session.get('login', False):
         return redirect(url_for('login'))
 
-    query = '''SELECT uid, crdate, amount, date, desc 
-             FROM accounting_entry WHERE NOT DELETED LIMIT 10
-            '''
-
-    acc_entries = []
-
-    for row in get_rows(query):
-        query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm 
-                   ON tag.uid=tag_mm.uid_local 
-                   AND tag_mm.uid_foreign=(?)'''
-        entry_tags = get_rows(query, (row[0],))
-        
-        entry_tags = [Tag._make(tag) for tag in entry_tags]
-        
-        acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
-
-    tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
-    tags = [Tag._make(tag) for tag in tags]
-
-    return render_template('index.html', acc_entries=acc_entries, tags=tags)
+    return render_template('index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -120,4 +101,31 @@ def create_tag():
     get_db().commit()
     
     return redirect(url_for('index'))
+
+@app.route('/entries')
+def entries():
+    query = '''SELECT uid, crdate, amount, date, desc 
+             FROM accounting_entry WHERE NOT DELETED LIMIT 10
+            '''
+
+    acc_entries = []
+
+    for row in get_rows(query):
+        query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm 
+                   ON tag.uid=tag_mm.uid_local 
+                   AND tag_mm.uid_foreign=(?)'''
+        entry_tags = get_rows(query, (row[0],))
+        
+        entry_tags = [Tag._make(tag) for tag in entry_tags]
+        
+        acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
+    
+    return render_template('entries.html', acc_entries=acc_entries)
+
+@app.route('/tags')
+def tags():
+    tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
+    tags = [Tag._make(tag) for tag in tags]
+    
+    return render_template('tags.html', tags=tags)
 

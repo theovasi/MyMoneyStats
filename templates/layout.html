@@ -8,7 +8,10 @@
 {% if session['login'] %}
 <nav class="navigation">
     <ul>
-        {% for action, route, name in (('index', '/', 'Start'), ('logout', '/logout', 'Logout')) %}
+        {% for action, route, name in (('index', '/', 'Start'), 
+                                       ('entries', '/entries', 'Entries'),
+                                       ('tags', '/tags', 'Tags'),
+                                       ('logout', '/logout', 'Logout')) %}
          <li>
             {% if request.path == route %}
             <span>{{ name }}</span>
