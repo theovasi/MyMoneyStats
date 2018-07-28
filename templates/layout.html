@@ -12,12 +12,8 @@
                                        ('entries', '/entries', 'Entries'),
                                        ('tags', '/tags', 'Tags'),
                                        ('logout', '/logout', 'Logout')) %}
-         <li>
-            {% if request.path == route %}
-            <span>{{ name }}</span>
-            {% else %}
+         <li {{ 'class="current"' if request.path == route }}>
             <a href="{{ url_for(action) }}">{{ name }}</a>
-            {% endif %}
         </li>
         {% endfor %}
     </ul>
