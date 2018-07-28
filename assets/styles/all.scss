@@ -1,3 +1,12 @@
+body, ul {
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+}
+
 .entry-table {
     table-layout: auto;
     border: 1px solid black;
@@ -42,4 +51,38 @@
 
 .center-text {
     text-align: center;
+}
+
+.navigation {
+    background: #a0a0f5;
+    
+    ul {
+        display: flex;
+        
+        li {
+            padding: 8px;
+            
+             &:hover {
+                background: #c0c0ff;
+            }
+        }
+        
+        .current {
+            background: #8585e0;
+        
+            a {
+                pointer-events: none;
+                cursor: default; 
+            }
+            
+            &:hover {
+                background: #8585e0;
+            }
+        }
+        
+        a {
+            text-decoration: none;
+            color: #111;
+        }
+    }
 }
