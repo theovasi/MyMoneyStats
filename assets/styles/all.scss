@@ -60,8 +60,6 @@ ul {
         display: flex;
         
         li {
-            padding: 8px;
-            
              &:hover {
                 background: #c0c0ff;
             }
@@ -81,6 +79,8 @@ ul {
         }
         
         a {
+            display: block;
+            padding: 8px;
             text-decoration: none;
             color: #111;
         }
