@@ -63,6 +63,10 @@ ul {
              &:hover {
                 background: #c0c0ff;
             }
+            
+            &:last-child {
+                margin-left: auto;
+            }
         }
         
         .current {
