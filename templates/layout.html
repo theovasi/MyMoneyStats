@@ -12,7 +12,7 @@
                                        ('entries', '/entries', 'Entries'),
                                        ('tags', '/tags', 'Tags'),
                                        ('logout', '/logout', 'Logout')) %}
-         <li {{ 'class="current"' if request.path == route }}>
+         <li {{ 'class=current' if request.path == route }}>
             <a href="{{ url_for(action) }}">{{ name }}</a>
         </li>
         {% endfor %}
