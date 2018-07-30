@@ -93,7 +93,7 @@ def create_entry():
         
     get_db().commit()
 
-    return redirect(url_for('index'))
+    return redirect(url_for('entries'))
     
 
 @app.route('/create/tag', methods=['POST'])
@@ -107,13 +107,13 @@ def create_tag():
     
     get_db().commit()
     
-    return redirect(url_for('index'))
+    return redirect(url_for('tags'))
 
 @app.route('/entries')
 @login_required
 def entries():
     query = '''SELECT uid, crdate, amount, date, desc 
-             FROM accounting_entry WHERE NOT DELETED LIMIT 10
+             FROM accounting_entry WHERE NOT DELETED ORDER BY crdate DESC LIMIT 10
             '''
 
     acc_entries = []
