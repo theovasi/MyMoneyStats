@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+from functools import wraps
 from collections import namedtuple
 
 from flask import Flask, render_template, session, redirect, request, url_for, g
@@ -10,6 +11,14 @@ DATABASE = './data/mms.sqlite'
 
 AccountingEntry = namedtuple('AccountingEntry', 'uid, crdate, amount, date, desc, tags')
 Tag = namedtuple('Tag', 'uid, value')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('login', False):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -36,10 +45,8 @@ def get_rows(query, args=()):
 
 
 @app.route('/')
+@login_required
 def index():
-    if not session.get('login', False):
-        return redirect(url_for('login'))
-
     return render_template('index.html')
 
 
@@ -103,6 +110,7 @@ def create_tag():
     return redirect(url_for('index'))
 
 @app.route('/entries')
+@login_required
 def entries():
     query = '''SELECT uid, crdate, amount, date, desc 
              FROM accounting_entry WHERE NOT DELETED LIMIT 10
@@ -123,6 +131,7 @@ def entries():
     return render_template('entries.html', acc_entries=acc_entries)
 
 @app.route('/tags')
+@login_required
 def tags():
     tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
     tags = [Tag._make(tag) for tag in tags]
