@@ -7,6 +7,10 @@ ul {
     list-style: none;
 }
 
+body {
+    padding-top: 35px;
+}
+
 .entry-table {
     table-layout: auto;
     border: 1px solid black;
@@ -54,6 +58,11 @@ ul {
 }
 
 .navigation {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+
     background: #a0a0f5;
     
     ul {
