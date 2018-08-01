@@ -120,15 +120,22 @@ def create_tag():
     return redirect(url_for('tags'))
 
 @app.route('/entries')
+@app.route('/entries/<year>')
+@app.route('/entries/<year>/<month>')
+@app.route('/entries/<year>/<month>/<day>')
 @login_required
-def entries():
+def entries(year=2, month=1, day=1):
+    # TODO: Return error page for invalid parameters
+    date = int(datetime(int(year), int(month), int(day)).timestamp())
+    
     query = '''SELECT uid, crdate, amount, date, desc 
-             FROM accounting_entry WHERE NOT DELETED ORDER BY crdate DESC LIMIT 10
+               FROM accounting_entry WHERE date >= (?) and NOT deleted 
+               ORDER BY crdate DESC
             '''
 
     acc_entries = []
 
-    for row in get_rows(query):
+    for row in get_rows(query, (date,)):
         query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm 
                    ON tag.uid=tag_mm.uid_local 
                    AND tag_mm.uid_foreign=(?)'''
