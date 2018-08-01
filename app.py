@@ -47,7 +47,17 @@ def get_rows(query, args=()):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    
+    query = 'SELECT SUM(amount) FROM accounting_entry WHERE NOT deleted'
+    balance=get_rows(query)[0][0]
+    
+    today = datetime.today()
+    first = int(datetime(today.year, today.month, 1).timestamp())
+    query = '''SELECT SUM(amount) FROM accounting_entry WHERE 
+               amount < 0 AND date >= (?) AND NOT deleted'''
+    spending = get_rows(query, (first,))[0][0]
+    
+    return render_template('index.html', balance=balance, spending=spending)
 
 
 @app.route('/login', methods=['GET', 'POST'])
