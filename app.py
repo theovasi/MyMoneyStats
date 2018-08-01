@@ -144,8 +144,11 @@ def entries(year=2, month=1, day=1):
         entry_tags = [Tag._make(tag) for tag in entry_tags]
         
         acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
+
+    tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
+    tags = [Tag._make(tag) for tag in tags]
     
-    return render_template('entries.html', acc_entries=acc_entries)
+    return render_template('entries.html', acc_entries=acc_entries, tags=tags)
 
 @app.route('/tags')
 @login_required
