@@ -73,7 +73,18 @@ body {
         display: flex;
         
         li {
-             &:hover {
+            &:first-child {
+                
+                width: 40px;
+                
+                a {
+                    background: no-repeat url("/static/img/icon.png");
+                    height: 19px;
+                    margin: 0 0 0 4px;
+                }
+            }
+        
+            &:hover {
                 background: #c0c0ff;
             }
             
