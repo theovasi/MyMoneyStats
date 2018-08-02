@@ -33,7 +33,7 @@
             <td>{{ entry.date }}</td>
             <td>{{ entry.desc }}</td>
             <td>{% for tag in entry.tags %}
-                <span>{{ tag.value }}</span>
+                <a href="{{ url_for('entries') }}?tags={{ tag.uid }}">{{ tag.value }}</a>
                 {% endfor %}
             </td>
         </tr>

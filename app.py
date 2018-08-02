@@ -128,10 +128,21 @@ def entries(year=2, month=1, day=1):
     # TODO: Return error page for invalid parameters
     date = int(datetime(int(year), int(month), int(day)).timestamp())
     
-    query = '''SELECT uid, crdate, amount, date, desc 
-               FROM accounting_entry WHERE date >= (?) and NOT deleted 
-               ORDER BY crdate DESC
-            '''
+    if request.args.get('tags', None):
+        tags = [int(tag) for tag in request.args['tags'].split(',')]
+        tags = ','.join([str(tag) for tag in tags])
+        
+        query = '''SELECT uid, crdate, amount, date, desc 
+                   FROM accounting_entry WHERE date >= ? AND uid IN 
+                   (SELECT uid_foreign FROM tag_mm WHERE uid_local IN
+                   ({0}))
+                   AND NOT deleted ORDER BY crdate DESC
+                '''.format(tags)
+    else:
+        query = '''SELECT uid, crdate, amount, date, desc 
+                   FROM accounting_entry WHERE date >= ?
+                   AND NOT deleted ORDER BY crdate DESC
+                '''
 
     acc_entries = []
 
@@ -142,7 +153,7 @@ def entries(year=2, month=1, day=1):
         entry_tags = get_rows(query, (row[0],))
         
         entry_tags = [Tag._make(tag) for tag in entry_tags]
-        
+
         acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
 
     tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
