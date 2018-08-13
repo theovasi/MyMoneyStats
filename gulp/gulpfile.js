@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var pump = require('pump');
-var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify-es').default;
 
 gulp.task('default', function() {
     ;
