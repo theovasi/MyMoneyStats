@@ -3,7 +3,9 @@ from datetime import datetime
 from functools import wraps
 from collections import namedtuple
 
-from flask import Flask, render_template, session, redirect, request, url_for, g
+from flask import (Flask, render_template, session, redirect, request,
+                   url_for, g, jsonify)
+
 app = Flask(__name__)
 app.config.from_envvar('APP_SETTINGS')
 
@@ -47,16 +49,16 @@ def get_rows(query, args=()):
 @app.route('/')
 @login_required
 def index():
-    
+
     query = 'SELECT SUM(amount) FROM accounting_entry WHERE NOT deleted'
     balance=get_rows(query)[0][0]
-    
+
     today = datetime.today()
     first = int(datetime(today.year, today.month, 1).timestamp())
-    query = '''SELECT SUM(amount) FROM accounting_entry WHERE 
+    query = '''SELECT SUM(amount) FROM accounting_entry WHERE
                amount < 0 AND date >= (?) AND NOT deleted'''
     spending = get_rows(query, (first,))[0][0]
-    
+
     return render_template('index.html', balance=balance, spending=spending)
 
 
@@ -94,30 +96,62 @@ def create_entry():
     query = 'INSERT INTO accounting_entry (crdate, amount, date,  desc) VALUES (?, ?, ?, ?)'
 
     cur.execute(query, (crdate, amount, date, desc))
-    
+
     entry_uid = get_rows('SELECT last_insert_rowid()')[0][0]
 
     for tag_uid in [int(uid) for uid in request.form.getlist('tag')]:
         query = 'INSERT INTO tag_mm (uid_local, uid_foreign) VALUES (?,?)'
         cur.execute(query, (tag_uid, entry_uid))
-        
+
     get_db().commit()
 
     return redirect(url_for('entries'))
-    
+
 
 @app.route('/create/tag', methods=['POST'])
 def create_tag():
     tag = request.form['tag']
-    
+
     cur = get_db().cursor()
-    
+
     query = 'INSERT INTO tag (value) VALUES (?)'
     cur.execute(query, (tag,))
-    
+
     get_db().commit()
-    
+
     return redirect(url_for('tags'))
+
+def retrieve_entries(year, month, day, tags=()):
+    date = int(datetime(int(year), int(month), int(day)).timestamp())
+
+    if tags:
+        tags = [int(tag) for tag in request.args['tags'].split(',')]
+        tags = ','.join([str(tag) for tag in tags])
+
+        query = '''SELECT uid, crdate, amount, date, desc
+                   FROM accounting_entry WHERE date >= ? AND uid IN
+                   (SELECT uid_foreign FROM tag_mm WHERE uid_local IN
+                   ({0}))
+                   AND NOT deleted ORDER BY crdate DESC
+                '''.format(tags)
+    else:
+        query = '''SELECT uid, crdate, amount, date, desc
+                   FROM accounting_entry WHERE date >= ?
+                   AND NOT deleted ORDER BY crdate DESC
+                '''
+
+    acc_entries = []
+
+    for row in get_rows(query, (date,)):
+        query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm
+                   ON tag.uid=tag_mm.uid_local
+                   AND tag_mm.uid_foreign=(?)'''
+        entry_tags = get_rows(query, (row[0],))
+
+        entry_tags = [Tag._make(tag) for tag in entry_tags]
+
+        acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
+    return acc_entries
 
 @app.route('/entries')
 @app.route('/entries/<year>')
@@ -126,39 +160,12 @@ def create_tag():
 @login_required
 def entries(year=2, month=1, day=1):
     # TODO: Return error page for invalid parameters
-    date = int(datetime(int(year), int(month), int(day)).timestamp())
-    
-    if request.args.get('tags', None):
-        tags = [int(tag) for tag in request.args['tags'].split(',')]
-        tags = ','.join([str(tag) for tag in tags])
-        
-        query = '''SELECT uid, crdate, amount, date, desc 
-                   FROM accounting_entry WHERE date >= ? AND uid IN 
-                   (SELECT uid_foreign FROM tag_mm WHERE uid_local IN
-                   ({0}))
-                   AND NOT deleted ORDER BY crdate DESC
-                '''.format(tags)
-    else:
-        query = '''SELECT uid, crdate, amount, date, desc 
-                   FROM accounting_entry WHERE date >= ?
-                   AND NOT deleted ORDER BY crdate DESC
-                '''
 
-    acc_entries = []
-
-    for row in get_rows(query, (date,)):
-        query = '''SELECT tag.uid, tag.value FROM tag INNER JOIN tag_mm 
-                   ON tag.uid=tag_mm.uid_local 
-                   AND tag_mm.uid_foreign=(?)'''
-        entry_tags = get_rows(query, (row[0],))
-        
-        entry_tags = [Tag._make(tag) for tag in entry_tags]
-
-        acc_entries.append(AccountingEntry._make(row + (entry_tags,)))
+    acc_entries = retrieve_entries(year, month, day, request.args.get('tags', ()))
 
     tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
     tags = [Tag._make(tag) for tag in tags]
-    
+
     return render_template('entries.html', acc_entries=acc_entries, tags=tags)
 
 @app.route('/tags')
@@ -166,6 +173,21 @@ def entries(year=2, month=1, day=1):
 def tags():
     tags = get_rows('SELECT uid, value FROM tag WHERE NOT DELETED')
     tags = [Tag._make(tag) for tag in tags]
-    
+
     return render_template('tags.html', tags=tags)
+
+@app.route('/api/v1/entries', methods=['GET'])
+@app.route('/api/v1/entries/<year>', methods=['GET'])
+@app.route('/api/v1/entries/<year>/<month>', methods=['GET'])
+@app.route('/api/v1/entries/<year>/<month>/<day>', methods=['GET'])
+@login_required
+def get_entries(year=2, month=1, day=1):
+    acc_entries = retrieve_entries(year, month, day, request.args.get('tags', ()))
+
+    acc_entries = [entry._asdict() for entry in acc_entries]
+
+    for entry in acc_entries:
+        entry['tags'] = [tag._asdict() for tag in entry['tags']]
+
+    return jsonify(acc_entries)
 

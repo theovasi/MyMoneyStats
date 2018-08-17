@@ -20,6 +20,17 @@
 	<button type="submit">Create</button>
 </form>
 
+<form method="GET" id="entry-filter">
+    <div>
+    {%  for tag in tags %}
+        <label>
+            {{ tag.value }}
+            <input name="tag" type="checkbox" value="{{ tag.uid }}">
+        </label>
+    {% endfor %}
+    </div>
+    <button id="filter-button" type="button">Filter</button>
+</form>
 <table class="entry-table">
     <tr>
         <th>Amount</th>
