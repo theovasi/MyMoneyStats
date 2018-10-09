@@ -3,7 +3,7 @@ A small web app to keep track of your expenditure. It currently features a singl
 well as vanilla JavaScript and SASS/SCSS.
 
 ## Install
-Requires [python3](https://www.python.org/downloads/), [yarn](https://yarnpkg.com/lang/en/docs/install/) and [gulp](https://gulpjs.com/).
+Requires [python3](https://www.python.org/downloads/), [yarn](https://yarnpkg.com/lang/en/docs/install/), [gulp](https://gulpjs.com/) and [sqlite](https://www.sqlite.org/download.html).
 See the links on how to install those on your OS.
 
 Clone the repository
@@ -40,6 +40,18 @@ The secret key can be generated with python (__This key must be kept secret and 
 ```python
 import os
 os.urandom(24)
+```
+Create database file
+```
+mkdir data
+cd data
+sqlite3 mms.sqlite < ../db-schema.sql
+```
+Compile SCSS and uglify JavaScript
+```
+cd gulp
+gulp sass
+gulp uglify
 ```
 Start the watch gulp task if you work on CSS/JavaScript
 ```
