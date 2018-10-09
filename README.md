@@ -31,6 +31,12 @@ cd gulp
 yarn install
 ```
 ## Set up
+The following steps can be omitted by running the setup script
+```
+sh setup.sh
+```
+If you prefer to do these steps by hand, follow the instructions below  
+  
 Create a `settings.cfg` file with the following structure
 ```
 SECRET_KEY=yoursecretkey
@@ -47,6 +53,7 @@ mkdir data
 cd data
 sqlite3 mms.sqlite < ../db-schema.sql
 ```
+## Run gulp task(s)
 Compile SCSS and uglify JavaScript
 ```
 cd gulp
