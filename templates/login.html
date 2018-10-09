@@ -1,19 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="login-form-wrapper">
-    <h1 class="center-text">Muh Money Stats</h1>
-    <div class="login-form">
-        <form method="post">
-          <h2 class="center-text">Sign in</h2>
-          <input type="password" name=passwd id="inputPassword" placeholder="Password" required>
-          <div>
-            <label>
-              <input type="checkbox" value="true" name="remember"> Remember me
-            </label>
-          </div>
-          <button type="submit">Sign in</button>
-        </form>
-    </div>
+<div id="login-page-wrapper">
+  <div class="login-form-wrapper">
+      <h1 class="center-text login-headline">Muh Money Stats</h1>
+      <div class="login-form">
+          <form method="post">
+            <h2 class="center-text">Sign in</h2>
+            <input type="password" name=passwd id="inputPassword" placeholder="Password" required>
+            <div class="checkbox-wrapper">
+              <label>
+                <input type="checkbox" value="true" name="remember"> Remember me
+                <span class="checkbox"></span>
+              </label>
+            </div>
+            <button type="submit">Sign in</button>
+          </form>
+      </div>
+  </div>
 </div>
 {% endblock %}
