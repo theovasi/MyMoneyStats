@@ -1,5 +1,6 @@
 # MyMoneyStats
-A small web app to keep track of your expenditure. It currently features a single anonymous user (password only login) and only uses sqlite (for now) and flask as well as vanilla JavaScript and LESS/SCSS.
+A small web app to keep track of your expenditure. It currently features a single anonymous user (password only login) and only uses sqlite (for now) and flask as 
+well as vanilla JavaScript and SASS/SCSS.
 
 ## Install
 Requires [python3](https://www.python.org/downloads/), [yarn](https://yarnpkg.com/lang/en/docs/install/) and [gulp](https://gulpjs.com/).
