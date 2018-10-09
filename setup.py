@@ -6,7 +6,7 @@ def setup():
     pswd = getpass.getpass('Enter password:')
     with open('settings.cfg', 'w+') as settings_file:
         settings_file.write("SECRET_KEY={}\n".format(os.urandom(24)))
-        settings_file.write("password='{}'".format(pswd))
+        settings_file.write("PASSWD='{}'".format(pswd))
 
 
 if __name__ == '__main__':
