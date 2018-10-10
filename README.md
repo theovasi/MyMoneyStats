@@ -37,15 +37,20 @@ sh setup.sh
 ```
 If you prefer to do these steps by hand, follow the instructions below  
   
-Create a `settings.cfg` file with the following structure
+Create a `settings.cfg` file with the following structure (__The contents of this file must be kept secret! Never add it to a repository!__)
 ```
 SECRET_KEY=yoursecretkey
-PASSWD=yourplaintextpassword
+PASSWD=yourpasswordhash
 ```
-The secret key can be generated with python (__This key must be kept secret and should never be added to any repository!__):
+The secret key can be generated with python
 ```python
 import os
 os.urandom(24)
+```
+The password hash too can be created with python
+```python
+from passlib.hash import pbkdf2_sha256
+pbkdf2_sha256.hash("mypassword")
 ```
 Create database file
 ```
