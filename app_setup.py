@@ -16,14 +16,20 @@ def app_setup():
 
     os.mkdir('data')
     db_choice = input(
-        'Do you want to create an empty database (1) or use one with sample data (2) (1|2) ')
-    if db_choice is '1':
-        os.system('sqlite3 data/mms.sqlite < db-schema.sql')
-    elif db_choice is '2':
-        os.system('sqlite3 data/mms.sqlite < sample_data/sample_data.sql')
-    else:
-        print('Invalid input.')
-        return
+        'Do you want to create an empty database (1) or use one with sample'
+        'data (2) (1|2) ')
+    while(True):
+        if db_choice is '1':
+            os.system('sqlite3 data/mms.sqlite < db-schema.sql')
+            break
+        elif db_choice is '2':
+            os.system('sqlite3 data/mms.sqlite < sample_data/sample_data.sql')
+            break
+        else:
+            print('Invalid input.')
+            db_choice = input(
+                'Do you want to create an empty database (1) or use one with '
+                'sample data (2) (1|2) ')
 
 
 if __name__ == '__main__':
