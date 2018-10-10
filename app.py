@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 from functools import wraps
 from collections import namedtuple
+from passlib.hash import pbkdf2_sha256
 
 from flask import (Flask, render_template, session, redirect, request,
                    url_for, g, jsonify)
@@ -51,7 +52,7 @@ def get_rows(query, args=()):
 def index():
 
     query = 'SELECT SUM(amount) FROM accounting_entry WHERE NOT deleted'
-    balance=get_rows(query)[0][0]
+    balance = get_rows(query)[0][0]
 
     today = datetime.today()
     first = int(datetime(today.year, today.month, 1).timestamp())
@@ -65,7 +66,8 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if request.form['passwd'] == app.config['PASSWD']:
+        # Checks if the input password meets the hashed saved password
+        if pbkdf2_sha256.verify(request.form['passwd'], app.config['PASSWD']):
             session['login'] = True
 
             if request.form.get('remember', False):
